@@ -6,6 +6,8 @@ the same wheel every time I wanted to write a commandline executable. For
 example, a relatively simple command using OptionParser directly may look like
 the following:
 
+    require 'optparse'
+
     @options = {:force => false, :f => false, :name => nil, :n => nil}
     parser   = OptionParser.new do |opt|
       opt.banner = <<-TXT.strip
@@ -44,6 +46,8 @@ the following:
 
 Using Shebang this can be done as following:
 
+    require 'shebang'
+
     class Greet < Shebang::Command
       command :default
       banner  'Runs an example command.'
@@ -73,6 +77,8 @@ As shown in the example above commands can be created by extending the class
 required an instance method called ``run()`` to be defined, this method is
 called once OptionParser has been set up and the commandline arguments have
 been parsed:
+
+    require 'shebang'
 
     class Greet < Shebang::Command
       command :default
@@ -130,5 +136,3 @@ Say you want to use sub commands, in that case you'll have to use
       @argv = argv
       @option_parser.order!(@argv)
     end
-
-

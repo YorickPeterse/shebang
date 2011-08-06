@@ -5,13 +5,13 @@ module Shebang
   # banners, callbacks, and so on. In it's most basic form a command looks like
   # the following:
   #
-  #  class MyCommand < Shebang::Command
-  #    command 'my-command'
+  #     class MyCommand < Shebang::Command
+  #       command 'my-command'
   #
-  #    def run
+  #       def run
   #
-  #    end
-  #  end
+  #       end
+  #     end
   #
   # The class method command() is used to register the class to the specified
   # name, without this Shebang would be unable to call it.
@@ -19,15 +19,15 @@ module Shebang
   # Defining options can be done by calling the class method option() or it's
   # alias o():
   #
-  #  class MyCommand < Shebang::Command
-  #    command 'my-command'
+  #     class MyCommand < Shebang::Command
+  #       command 'my-command'
   #
-  #    o :h, :help, 'Shows this help message', :method => :help
+  #       o :h, :help, 'Shows this help message', :method => :help
   #
-  #    def run
+  #       def run
   #
-  #    end
-  #  end
+  #       end
+  #     end
   #
   # If you're going to define a help option, and you most likely will, you don't
   # have to manually add a method that shows the message as the Command class
@@ -103,7 +103,7 @@ module Shebang
       # @author Yorick Peterse
       # @since  0.1
       # @param  [String] title The title of the topic.
-      # @parma  [String] text The content of the topic.
+      # @param  [String] text The content of the topic.
       #
       def help(title, text)
         Details[:help][title] = text.strip

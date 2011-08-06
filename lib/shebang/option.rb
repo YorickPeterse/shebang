@@ -17,14 +17,14 @@ module Shebang
     # @param  [#to_sym] long The long option name such as :help.
     # @param  [String] desc The description of the option.
     # @param  [Hash] options Hash containing various configuration options for
-    # the OptionParser option.
+    #  the OptionParser option.
     # @option options :type The type of value for the option, set to TrueClass
-    # by default.
+    #  by default.
     # @option options :key The key to use to indicate a value whenever the type
-    # of an option is something else than TrueClass or FalseClass. This option
-    # is set to "VALUE" by default.
+    #  of an option is something else than TrueClass or FalseClass. This option
+    #  is set to "VALUE" by default.
     # @option options :method A symbol that refers to a method that should be
-    # called whenever the option is specified.
+    #  called whenever the option is specified.
     #
     def initialize(short, long, desc = nil, options = {})
       @short, @long = short.to_sym, long.to_sym

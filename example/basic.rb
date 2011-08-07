@@ -11,17 +11,24 @@ class Greet < Shebang::Command
   o :n, :name   , 'A person\'s name', :type => String,
     :required => true, :default => 'Shebang'
 
-  def version
-    puts Shebang::Version
-    exit
-  end
-
+  # $ ruby example/basic.rb
+  # $ ruby example/basic.rb default
+  # $ ruby example/basic.rb default index
   def index
     puts "Your name is #{@options[:n]}"
   end
 
+  # $ ruby example/basic.rb test
+  # $ ruby example/basic.rb default test
   def test
     puts 'This is a test method'
+  end
+
+  protected
+
+  def version
+    puts Shebang::Version
+    exit
   end
 end
 

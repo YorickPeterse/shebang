@@ -153,21 +153,3 @@ headers in the help message you can do so as following:
 You can also change the name of the default command:
 
     Shebang::Config[:default_command] = :my_default_command
-
-## Parsing Customization
-
-By default Shebang uses OptionParser#parse! to parse a set of commandline
-arguments. If you want to change this behavior you can do so by defining a
-method called ``parse()`` in your classes:
-
-    def parse(argv=[])
-      # Do something here...
-    end
-
-Say you want to use sub commands, in that case you'll have to use
-``OptionParser#order!``, this can be done as following:
-
-    def parse(argv=[])
-      @argv = argv
-      @option_parser.order!(@argv)
-    end

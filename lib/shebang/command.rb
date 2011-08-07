@@ -160,7 +160,7 @@ module Shebang
             if !option.options[:method].nil? \
             and respond_to?(option.options[:method])
               # Pass the value to the method?
-              if self.class.instance_method(option.options[:method]).arity === 1
+              if self.class.instance_method(option.options[:method]).arity != 0
                 send(option.options[:method], value)
               else
                 send(option.options[:method])
@@ -177,12 +177,14 @@ module Shebang
     # @author Yorick Peterse
     # @since  0.1
     # @param  [Array] argv Array containing the command line arguments to parse.
+    # @return [Array] argv Array containing all the command line arguments after
+    #  it has been processed.
     #
     def parse(argv = [])
-      @argv = argv
-
-      @option_parser.parse!(@argv)
+      @option_parser.parse!(argv)
       process_options
+
+      return argv
     end
 
     ##

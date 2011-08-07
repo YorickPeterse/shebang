@@ -54,22 +54,29 @@ module Shebang
 
       if !argv.empty?
         # Get the command name
-        if argv[0][0] != '-'
+        if argv[0][0] != '-' and Commands.key?(argv[0].to_sym)
           command = argv.delete_at(0).to_sym
-        end
-
-        # Get a custom method name
-        if argv[0] and argv[0][0] != '-'
-          method = argv.delete_at(0).to_sym
         end
       end
 
       if Commands.key?(command)
         klass = Commands[command].new
-        klass.parse(argv)
 
+        # Get the method to call.
+        if argv[0] and argv[0][0] != '-' and klass.respond_to?(argv[0].to_sym)
+          method = argv.delete_at(0).to_sym
+        end
+
+        # Parse the arguments and prepare all the options.
+        argv = klass.parse(argv)
+
+        # Call the method and pass the commandline arguments to it.
         if klass.respond_to?(method)
-          klass.send(method)
+          if klass.class.instance_method(method).arity != 0
+            klass.send(method, argv)
+          else
+            klass.send(method)
+          end
         else
           error("The command #{command} does not have a #{method}() method")
         end

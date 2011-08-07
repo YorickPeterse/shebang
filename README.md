@@ -63,7 +63,7 @@ Using Shebang this can be done as following:
         exit
       end
 
-      def run
+      def index
         puts "Your name is #{@options[:n]}"
       end
     end
@@ -74,7 +74,7 @@ Using Shebang this can be done as following:
 
 As shown in the example above commands can be created by extending the class
 ``Shebang::Command`` and calling the class method ``command()``. Each command
-required an instance method called ``run()`` to be defined, this method is
+required an instance method called ``index()`` to be defined, this method is
 called once OptionParser has been set up and the commandline arguments have
 been parsed:
 
@@ -83,7 +83,7 @@ been parsed:
     class Greet < Shebang::Command
       command :default
 
-      def run
+      def index
 
       end
     end
@@ -106,6 +106,41 @@ Now whenever the ``-f`` of ``--foobar`` option is set the method ``foobar()``
 will be executed **without** stopping the rest of the command. This means that
 you'll have to manually call ``Kernel.exit()`` if you want to stop the execution
 process if a certain option is specified.
+
+Shebang comes with support for defining sub commands. Sub commands are nothing
+more than different methods than the default one. Say you have a class
+``Git::Submodule``, to run the command itself you'd invoke the default method on
+this class (index by default):
+
+    cmd = Git::Submodule.new
+
+    cmd.parse([...])
+    cmd.index
+
+To how the status of a submodule you'd invoke ``git submodule status``, this
+translates to the following code:
+
+    cmd = Git::Submodule.new
+
+    cmd.parse([...])
+    cmd.status
+
+Shebang takes care of this using ``Shebang.run()``. The first commandline
+argument that does not start with ``-`` (and this isn't an option) is considered
+the command name. If there's another argument that's not a switch following that
+one will be used as the method name. This means that in order to invoke
+``Git::Submodule#index`` you'd type the following into your terminal:
+
+    git.rb submodule
+
+If you want to invoke a method other than the default one you'd do the
+following:
+
+    git.rb submodule status
+
+In other words, the syntax of a Shebang command is the following:
+
+    script [COMMAND] [METHOD] [ARGS] [OPTIONS]
 
 ## Configuration
 

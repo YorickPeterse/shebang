@@ -8,9 +8,10 @@ Gem::Specification.new do |s|
   s.date        = '06-08-2011'
   s.authors     = ['Yorick Peterse']
   s.email       = 'yorickpeterse@gmail.com'
-  s.summary     = ''
+  s.summary     = 'Shebang is a nice wrapper around OptionParser that makes it
+easier to write commandline executables.'
   s.homepage    = 'https://github.com/yorickpeterse/shebang'
-  s.description = ''
+  s.description = s.summary
   s.files       = `cd #{path}; git ls-files`.split("\n").sort
   s.has_rdoc    = 'yard'
 

@@ -25,6 +25,8 @@ module Shebang
     #  is set to "VALUE" by default.
     # @option options :method A symbol that refers to a method that should be
     #  called whenever the option is specified.
+    # @option options :required Indicates that the option has to be specified.
+    # @option options :default The default value of the option.
     #
     def initialize(short, long, desc = nil, options = {})
       @short, @long = short.to_sym, long.to_sym
@@ -32,7 +34,9 @@ module Shebang
       @options      = {
         :type     => TrueClass,
         :key      => 'VALUE',
-        :method   => nil
+        :method   => nil,
+        :required => false,
+        :default  => nil
       }.merge(options)
     end
 

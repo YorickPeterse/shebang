@@ -8,7 +8,7 @@ module Shebang
   #     class MyCommand < Shebang::Command
   #       command 'my-command'
   #
-  #       def run
+  #       def index
   #
   #       end
   #     end
@@ -24,7 +24,7 @@ module Shebang
   #
   #       o :h, :help, 'Shows this help message', :method => :help
   #
-  #       def run
+  #       def index
   #
   #       end
   #     end
@@ -54,8 +54,10 @@ module Shebang
       # @author Yorick Peterse
       # @since  0.1
       # @param  [#to_sym] name The name of the command.
+      # @param  [Hash] options Hash containing various options for the command.
+      # @option options :parent The name of the parent command.
       #
-      def command(name)
+      def command(name, options = {})
         name = name.to_sym
 
         if Shebang::Commands.key?(name)
@@ -180,6 +182,7 @@ module Shebang
       @argv = argv
 
       @option_parser.parse!(@argv)
+      process_options
     end
 
     ##
@@ -188,8 +191,8 @@ module Shebang
     # @author Yorick Peterse
     # @since  0.1
     #
-    def run
-      raise(NotImplementedError, "You need to define your own run() method")
+    def index
+      raise(NotImplementedError, "You need to define your own index() method")
     end
 
     ##
@@ -201,6 +204,33 @@ module Shebang
     def help
       puts @option_parser
       exit
+    end
+
+    protected
+
+    ##
+    # Method that loops over all the options and performs various checks to
+    # ensure that they're specified (if required), that they have their default
+    # values set and so on.
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    #
+    def process_options
+      Details[:options].each do |option|
+        # Set the default values
+        if @options[option.short].nil? or @options[option.short].empty?
+          @options[option.short] = @options[option.long] = \
+            option.options[:default]
+        end
+
+        # Check if all required options have been specified.
+        if option.options[:required] === true
+          if @options[option.short].nil? or @options[option.short].empty?
+            raise(OptionParser::MissingArgument, "-#{option.short}")
+          end
+        end
+      end
     end
   end # Command
 end # Shebang

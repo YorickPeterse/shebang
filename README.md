@@ -117,7 +117,7 @@ this class (index by default):
     cmd.parse([...])
     cmd.index
 
-To how the status of a submodule you'd invoke ``git submodule status``, this
+To show the status of a submodule you'd invoke ``git submodule status``, this
 translates to the following code:
 
     cmd = Git::Submodule.new

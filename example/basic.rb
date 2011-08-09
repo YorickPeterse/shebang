@@ -15,7 +15,7 @@ class Greet < Shebang::Command
   # $ ruby example/basic.rb default
   # $ ruby example/basic.rb default index
   def index
-    puts "Your name is #{@options[:n]}"
+    puts "Your name is #{option(:n)}"
   end
 
   # $ ruby example/basic.rb test

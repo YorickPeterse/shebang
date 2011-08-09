@@ -6,7 +6,8 @@ module Shebang
   # @since  0.1
   #
   class Option
-    attr_reader :short, :long, :description, :options
+    attr_reader   :short, :long, :description, :options
+    attr_accessor :value
 
     ##
     # Creates a new instance of the Option class.
@@ -38,6 +39,8 @@ module Shebang
         :required => false,
         :default  => nil
       }.merge(options)
+
+      @value = @options[:default]
     end
 
     ##
@@ -61,6 +64,32 @@ module Shebang
       end
 
       return params
+    end
+
+    ##
+    # Checks if the value of an option is not nil and not empty.
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    # @return [TrueClass|FalseClass]
+    #
+    def has_value?
+      if !@value.nil? and !@value.empty?
+        return true
+      else
+        return false
+      end
+    end
+
+    ##
+    # Indicates whether or not the option requires a value.
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    # @return [TrueClass|FalseClass]
+    #
+    def required?
+      return @options[:required]
     end
   end # Option
 end # Shebang

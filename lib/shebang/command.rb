@@ -39,15 +39,9 @@ module Shebang
   # @since  0.1
   #
   class Command
-    # Hash containing various details about a command such as the banner and all
-    # help topics.
-    Details = {
-      :banner  => nil,
-      :help    => {},
-      :options => []
-    }
-
-    class << self
+    # Several methods that become available as class methods once
+    # Shebang::Command is extended by another class.
+    module ClassMethods
       ##
       # Binds a class to the specified command name.
       #
@@ -61,10 +55,7 @@ module Shebang
         name = name.to_sym
 
         if Shebang::Commands.key?(name)
-          raise(
-            ArgumentError,
-            "The command #{name} has already been registered"
-          )
+          Shebang.error("The command #{name} has already been registered")
         end
 
         Shebang::Commands[name] = self
@@ -79,7 +70,7 @@ module Shebang
       # @param  [String] text The content of the banner.
       #
       def banner(text)
-        Details[:banner] = text.strip
+        @__banner = text.strip
       end
 
       ##
@@ -108,7 +99,8 @@ module Shebang
       # @param  [String] text The content of the topic.
       #
       def help(title, text)
-        Details[:help][title] = text.strip
+        @__help_topics      ||= {}
+        @__help_topics[title] = text.strip
       end
 
       ##
@@ -123,13 +115,25 @@ module Shebang
       # @see    Shebang::Option#initialize
       #
       def option(short, long, desc = nil, options = {})
-        option = Shebang::Option.new(short, long, desc, options)
+        @__options ||= []
+        option       = Shebang::Option.new(short, long, desc, options)
 
-        Details[:options].push(option)
+        @__options.push(option)
       end
       alias :o :option
+    end # ClassMethods
 
-    end # class << self
+    ##
+    # Modifies the class that inherits this class so that the module
+    # Shebang::Comand::ClassMethods extends the class.
+    #
+    # @author Yorick Peterse
+    # @since  09-08-2011
+    # @param  [Class] by The class that inherits from Shebang::Command.
+    #
+    def self.inherited(by)
+      by.extend(Shebang::Command::ClassMethods)
+    end
 
     ##
     # Creates a new instance of the command and sets up OptionParser.
@@ -138,13 +142,12 @@ module Shebang
     # @since  0.1
     #
     def initialize
-      @options       = {}
       @option_parser = OptionParser.new do |opt|
-        opt.banner         = Details[:banner]
+        opt.banner         = banner
         opt.summary_indent = Shebang::Config[:indent]
 
         # Process each help topic
-        Details[:help].each do |title, text|
+        help_topics.each do |title, text|
           opt.separator "#{Shebang::Config[:heading]}#{
             Shebang::Config[:indent]}#{text}" % title
         end
@@ -152,9 +155,9 @@ module Shebang
         opt.separator "#{Shebang::Config[:heading]}" % 'Options'
 
         # Add all the options
-        Details[:options].each do |option|
+        options.each do |option|
           opt.on(*option.option_parser) do |value|
-            @options[option.short] = @options[option.long] = value
+            option.value = value
 
             # Run a method?
             if !option.options[:method].nil? \
@@ -182,9 +185,47 @@ module Shebang
     #
     def parse(argv = [])
       @option_parser.parse!(argv)
-      process_options
+
+      options.each do |option|
+        if option.required? and !option.has_value?
+          Shebang.error("The -#{option.short} option is required")
+        end
+      end
 
       return argv
+    end
+
+    ##
+    # Returns the banner of the current class.
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    # @return [String]
+    #
+    def banner
+      self.class.instance_variable_get(:@__banner)
+    end
+
+    ##
+    # Returns all help topics for the current class.
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    # @return [Hash]
+    #
+    def help_topics
+      self.class.instance_variable_get(:@__help_topics) || {}
+    end
+
+    ##
+    # Returns an array of all the options for the current class.
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    # @return [Array]
+    #
+    def options
+      self.class.instance_variable_get(:@__options) || []
     end
 
     ##
@@ -198,6 +239,28 @@ module Shebang
     end
 
     ##
+    # Returns the value of a given option. The option can be specified using
+    # either the short or long name.
+    #
+    # @example
+    #  puts "Hello #{option(:name)}
+    #
+    # @author Yorick Peterse
+    # @since  0.1
+    # @param  [#to_sym] opt The name of the option.
+    # @return [Mixed]
+    #
+    def option(opt)
+      opt = opt.to_sym
+
+      options.each do |op|
+        if op.short === opt or op.long === opt
+          return op.value
+        end
+      end
+    end
+
+    ##
     # Shows the help message for the current class.
     #
     # @author Yorick Peterse
@@ -206,33 +269,6 @@ module Shebang
     def help
       puts @option_parser
       exit
-    end
-
-    protected
-
-    ##
-    # Method that loops over all the options and performs various checks to
-    # ensure that they're specified (if required), that they have their default
-    # values set and so on.
-    #
-    # @author Yorick Peterse
-    # @since  0.1
-    #
-    def process_options
-      Details[:options].each do |option|
-        # Set the default values
-        if @options[option.short].nil? or @options[option.short].empty?
-          @options[option.short] = @options[option.long] = \
-            option.options[:default]
-        end
-
-        # Check if all required options have been specified.
-        if option.options[:required] === true
-          if @options[option.short].nil? or @options[option.short].empty?
-            raise(OptionParser::MissingArgument, "-#{option.short}")
-          end
-        end
-      end
     end
   end # Command
 end # Shebang

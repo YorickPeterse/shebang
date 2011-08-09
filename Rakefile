@@ -4,7 +4,7 @@ module Shebang
   Gemspec = Gem::Specification::load(File.expand_path('../shebang.gemspec', __FILE__))
 end
 
-task_dir = File.expand_path('../lib/shebang/task', __FILE__)
+task_dir = File.expand_path('../task', __FILE__)
 
 Dir.glob("#{task_dir}/*.rake").each do |f|
   import(f)

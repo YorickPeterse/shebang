@@ -88,17 +88,16 @@ been parsed:
       end
     end
 
-The values of options and the commandline arguments (after they've been parsed)
-can be accessed in a command using the instance variables ``@options`` and
-``@argv``. The ``@options`` instance variable is a hash that contains the values
-of all options of both the short and long option name. This means that if the
-user specified the ``-n`` option you can still check it using
-``@options[:help]``.
+Options can be retrieved using the method ``option()`` which takes either the
+short or long name of an option, in both cases it will result in the same value
+(given the option names belong to the same option):
 
-Options can be specified using the class method ``option()`` or it's alias
-``o()``. Besides the features offered by OptionParser options can specify a
-method to execute in case that particular option has been specified. This can be
-done by passing the ``:method`` key to the option method:
+    option(:h) === option(:help) # => true
+
+Options can be added using the class method ``option()`` or it's alias ``o()``.
+Besides the features offered by OptionParser options can specify a method to
+execute in case that particular option has been specified. This can be done by
+passing the ``:method`` key to the option method:
 
     option :f, :foobar, 'Calls a method', :method => :foobar
 

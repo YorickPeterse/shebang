@@ -1,8 +1,7 @@
 require 'bacon'
 require 'stringio'
-require File.expand_path('../bacon/color_output', __FILE__)
 
-Bacon.extend(Bacon::ColorOutput)
+Bacon.extend(Bacon::TapOutput)
 Bacon.summary_on_exit
 
 ##
@@ -40,26 +39,4 @@ def catch_output
   end.join
 
   return data
-end
-
-##
-# Allows developers to create stubbed objects similar to Mocha's stub() method.
-#
-# @example
-#  obj = stub(:language => 'Ruby')
-#  puts obj.language # => "Ruby"
-#
-# @author Yorick Peterse
-# @param  [Hash] attributes A hash containing all the attributes to set and
-# their values.
-# @return [Class]
-#
-def stub(attributes)
-  obj = Struct.new(*attributes.keys).new
-
-  attributes.each do |k, v|
-    obj.send("#{k}=", v)
-  end
-
-  return obj
 end

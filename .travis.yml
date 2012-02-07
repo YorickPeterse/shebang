@@ -9,7 +9,8 @@ rvm:
   - jruby
 
 notifications:
-  email: false
+  email:
+    _ yorickpeterse@gmail.com
 
 branches:
   only:

@@ -64,7 +64,7 @@ Using Shebang this can be done as following:
       end
 
       def index
-        puts "Your name is #{@options[:n]}"
+        puts "Your name is #{option(:n)}"
       end
     end
 
